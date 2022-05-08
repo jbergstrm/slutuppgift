@@ -1,0 +1,112 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: linear-gradient(90deg, rgba(160, 175, 232, 1) 30%, rgba(129, 233, 255, 1) 100%);
+}
+
+main {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.webchat-container {
+    width: 450px;
+    height: 80vh;
+    display: flex;
+    flex-direction: column;
+    background-color: rgba(0, 0, 0, 0.6);
+    box-shadow: 2px 2px 20px rgba(0, 0, 0, 0.4);
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.webchat-header {
+    display: flex;
+    margin: 10px;
+    color: white;
+}
+
+.webchat-header button {
+    margin-left: auto;
+    color: white;
+    background-color: transparent;
+    border: none;
+    font-size: 32px;
+    font-weight: bold;
+    padding-right: 10px;
+}
+
+.webchat-chat {
+    flex: 1;
+    background-color: rgba(0, 0, 0, 0.3);
+    padding: 20px;
+    margin: 10px;
+    border-radius: 10px;
+}
+
+.webchat-message {
+    background-color: deepskyblue;
+    padding: 10px 10px 0 10px;
+    color: black;
+    width: fit-content;
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
+
+.user-sent {
+    margin-left: auto;
+    background-color: greenyellow;
+}
+
+.webchat-message-time {
+    font-size: 12px;
+    margin-top: 5px;
+    padding-bottom: 2px;
+    color: gray;
+}
+
+.user-sent-time {
+    text-align: end;
+}
+
+.webchat-footer {
+    margin-bottom: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.webchat-footer form {
+    display: flex;
+}
+
+form input {
+    flex: 1;
+    height: 40px;
+    border: none;
+    outline: none;
+    padding-left: 10px;
+    font-size: 16px;
+    margin-right: 10px;
+    border-radius: 5px;
+}
+
+form button {
+    font-size: 18px;
+    padding: 10px;
+    border: none;
+    outline: none;
+    border-radius: 5px;
+    background-color: dodgerblue;
+    color: white;
+    cursor: pointer;
+}
+
+form button:hover {
+    background-color: deepskyblue;
+}
