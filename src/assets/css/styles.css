@@ -1,62 +1,97 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
 body {
+    margin: 0;
     background: linear-gradient(90deg, rgba(160, 175, 232, 1) 30%, rgba(129, 233, 255, 1) 100%);
 }
 
-main {
+.sidebar {
+    height: 100%;
+    width: 85px;
+    padding-top: 30px;
+    position: fixed;
+    background-color: #111;
+    transition: 0.4s;
+    overflow-x: hidden;
+    white-space: nowrap;
+}
+
+.sidebar::-webkit-scrollbar {
+    width: 0;
+}
+
+.sidebar a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 24px;
+    color: #818181;
+    display: block;
+}
+
+.sidebar a:hover {
+    color: #f1f1f1;
+}
+
+.sidebar p {
+    display: inline;
+}
+
+.material-icons,
+.icon-text {
+    vertical-align: middle;
+}
+
+.material-icons {
+    margin: 0 30px 3px 0;
+}
+
+.main {
     height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.webchat-container {
-    width: 450px;
-    height: 80vh;
+.chatbox {
     display: flex;
     flex-direction: column;
+    width: 450px;
+    height: 80vh;
+    margin-left: 85px;
     background-color: rgba(0, 0, 0, 0.6);
     box-shadow: 2px 2px 20px rgba(0, 0, 0, 0.4);
     border-radius: 10px;
     padding: 10px;
 }
 
-.webchat-header {
-    display: flex;
-    margin: 10px;
-    color: white;
-}
-
-.webchat-header button {
-    margin-left: auto;
-    color: white;
-    background-color: transparent;
-    border: none;
-    font-size: 32px;
-    font-weight: bold;
-    padding-right: 10px;
-}
-
-.webchat-chat {
+.chat {
     flex: 1;
-    background-color: rgba(0, 0, 0, 0.3);
-    padding: 20px;
-    margin: 10px;
-    border-radius: 10px;
+    overflow-y: scroll;
+    scroll-behavior: smooth;
+    margin: 20px;
 }
 
-.webchat-message {
+.chat::-webkit-scrollbar {
+    width: 0;
+}
+
+.message {
     background-color: deepskyblue;
-    padding: 10px 10px 0 10px;
-    color: black;
+    color: #111;
     width: fit-content;
     border-radius: 5px;
-    margin-bottom: 15px;
+    max-width: 380px;
+}
+
+.message p {
+    margin: 0 0 15px 0;
+    padding: 5px 10px 5px 10px;
+}
+
+.text {
+    font-size: 20px;
+}
+
+.time {
+    font-size: 12px;
 }
 
 .user-sent {
@@ -64,49 +99,41 @@ main {
     background-color: greenyellow;
 }
 
-.webchat-message-time {
-    font-size: 12px;
-    margin-top: 5px;
-    padding-bottom: 2px;
-    color: gray;
-}
-
-.user-sent-time {
+.user-sent .time {
     text-align: end;
 }
 
-.webchat-footer {
-    margin-bottom: 10px;
-    margin-left: 10px;
-    margin-right: 10px;
-}
-
-.webchat-footer form {
+.chat-input form {
     display: flex;
 }
 
-form input {
+.chat-input form textarea {
     flex: 1;
-    height: 40px;
     border: none;
     outline: none;
-    padding-left: 10px;
-    font-size: 16px;
+    resize: none;
+    font-size: 20px;
     margin-right: 10px;
     border-radius: 5px;
+    padding: 10px 10px 0 10px;
+    min-height: 35px;
+    max-height: 250px;
 }
 
-form button {
+.chat-input form textarea::-webkit-scrollbar {
+    width: 0;
+}
+
+.chat-input form input {
     font-size: 18px;
     padding: 10px;
     border: none;
-    outline: none;
     border-radius: 5px;
     background-color: dodgerblue;
-    color: white;
+    color: #f1f1f1;
     cursor: pointer;
 }
 
-form button:hover {
+.chat-input form input:hover {
     background-color: deepskyblue;
 }

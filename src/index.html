@@ -8,39 +8,53 @@
     <title>Webchat</title>
 
     <link rel="stylesheet" href="./assets/css/styles.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
     <script src="./assets/js/script.js"></script>
 </head>
 
 <body>
-    <main>
-        <div class="webchat-container">
-            <header class="webchat-header">
-                <h1>Webchat</h1>
-                <button>&#8801;</button>
-            </header>
-            <section class="webchat-chat">
-                <article class="webchat-message">
-                    <p>Others</p>
-                    <p class="webchat-message-time">time</p>
-                </article>
+    <aside class="sidebar" id="sidebar" onmouseover="toggleSidebar()" onmouseout="toggleSidebar()">
+        <section>
+            <a href="index.html">
+                <i class="material-icons">home</i>
+                <p class="icon-text">Webchat</p>
+            </a>
+            <br>
+            <a href="#">
+                <i class="material-icons">person</i>
+                <p class="icon-text">Username</p>
+            </a>
+            <br>
+        </section>
+    </aside>
 
-                <article class="webchat-message user-sent">
-                    <p>Me</p>
-                    <p class="webchat-message-time user-sent-time">time</p>
+    <main class="main" id="main">
+        <section class="chatbox">
+            <section class="chat">
+                <article class="message">
+                    <p class="text">Other is all the other chatters in chat.</p>
+                    <p class="time">11:40</p>
                 </article>
-
-                <article class="webchat-message user-sent">
-                    <p>Another from me</p>
-                    <p class="webchat-message-time user-sent-time">time</p>
+                <article class="message user-sent">
+                    <p class="text">How does a long string of text look like in this configutation will it break the
+                        system.
+                        Dosent look like it will :D.</p>
+                    <p class="time">12:10</p>
+                </article>
+                <article class="message">
+                    <p class="text">Good that is works. :p </p>
+                    <p class="time">12:18</p>
                 </article>
             </section>
-            <footer class="webchat-footer">
-                <form>
-                    <input type="text">
-                    <button>SEND</button>
+
+            <footer class="chat-input">
+                <form method="post">
+                    <textarea maxlength="150" oninput="autoGrow(this)"></textarea>
+                    <input type="submit" id="postButton" value="POST">
                 </form>
             </footer>
-        </div>
+        </section>
     </main>
 </body>
 
