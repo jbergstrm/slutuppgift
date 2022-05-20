@@ -22,16 +22,28 @@ p {
     width: 0;
 }
 
-.sidebar a {
+.sidebar a,
+.sidebar button {
     padding: 8px 8px 8px 32px;
-    text-decoration: none;
-    font-size: 24px;
     color: #818181;
     display: block;
 }
 
-.sidebar a:hover {
+.sidebar a {
+    text-decoration: none;
+    font-size: 24px;
+}
+
+.sidebar button {
+    background-color: transparent;
+    border: none;
+    font-size: 20px;
+}
+
+.sidebar a:hover,
+.sidebar button:hover {
     color: #f1f1f1;
+    cursor: pointer;
 }
 
 .sidebar p {
@@ -57,7 +69,7 @@ p {
 .chatbox {
     display: flex;
     flex-direction: column;
-    width: 450px;
+    width: 70%;
     height: 80vh;
     margin-left: 85px;
     background-color: rgba(0, 0, 0, 0.6);
@@ -66,13 +78,24 @@ p {
     padding: 10px;
 }
 
+.chat-user {
+    color: #818181;
+    margin: 5px 20px 10px 20px;
+    overflow-x: hidden;
+}
+
+.chat-user h2 {
+    color: #f1f1f1;
+    margin: 0;
+}
+
 .chat {
     display: flex;
     flex-direction: column-reverse;
     flex: 1;
     overflow-y: scroll;
     scroll-behavior: smooth;
-    margin: 20px;
+    margin: 0 20px 0 20px;
 }
 
 .chat::-webkit-scrollbar {
@@ -105,6 +128,10 @@ p {
 .time {
     font-size: 12px;
     margin: 3px 0 0 10px;
+}
+
+.chat-input {
+    margin: 10px 0 0 0;
 }
 
 .chat-input form {
@@ -140,4 +167,39 @@ p {
 
 .chat-input form input:hover {
     background-color: deepskyblue;
+}
+
+.overlay {
+    display: none;
+    position: fixed;
+    background-color: rgba(0, 0, 0, 0.8);
+    width: 100%;
+    height: 100%;
+}
+
+.overlay form {
+    background-color: rgba(0, 0, 0, 0.6);
+    position: absolute;
+    top: 70px;
+    left: 90px;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.assign-username {
+    margin: 10px;
+    border: none;
+    border-radius: 5px;
+    font-size: 18px;
+}
+
+.assign-username-buttons {
+    margin: 0 0 0 10px;
+}
+
+.assign-username-button button {
+    font-size: 14px;
+    background-color: white;
+    border-color: white;
+    border-radius: 2px;
 }

@@ -1,17 +1,24 @@
+const URL_GET_MESSAGES =
+  "https://ha-slutuppgift-chat-do.westling.workers.dev/api/messages";
+
 var sidebarFolded = true;
-loadMessages();
+
+window.onload = function () {
+  loadMessages();
+
+  const username = window.localStorage.getItem("username");
+  if (username !== null && username !== "") loadUsername(username);
+  else loadUsername("Anonymous");
+};
 
 function loadMessages() {
-  fetch("../../token.txt")
+  fetch("./assets/token.data")
     .then((response) => response.text())
     .then((token) => {
-      fetch(
-        "https://ha-slutuppgift-chat-do.westling.workers.dev/api/messages",
-        {
-          method: "POST",
-          headers: { Authorization: token },
-        }
-      )
+      fetch(URL_GET_MESSAGES, {
+        method: "POST",
+        headers: { Authorization: token },
+      })
         .then((response) => response.json())
         .then((data) => {
           if (data.success) {
@@ -20,7 +27,9 @@ function loadMessages() {
 
             data.messages.forEach((message) => {
               const article = document.createElement("article");
-              article.innerHTML = projectTemplate(message);
+
+              article.classList.add("message");
+              article.innerHTML = messageTemplate(message);
               fragment.appendChild(article);
             });
 
@@ -28,21 +37,40 @@ function loadMessages() {
             autoScroll("chat");
           }
         })
-        .catch((err) => console.log(err));
+        .catch((err) =>
+          console.log(
+            "Failed to fetch data from: " + URL_GET_MESSAGES + ". ERROR: " + err
+          )
+        );
     })
-    .catch((err) => console.log(err));
+    .catch((err) => console.log("Failed to load bearer token. ERROR: " + err));
 }
 
-function projectTemplate({ user, message, timestamp }) {
+function loadUsername(username) {
+  document.getElementById("chatUser").innerHTML = chatHeaderTemplate(username);
+}
+
+function changeUsername() {
+  const username = document.getElementById("assign-username").value;
+  window.localStorage.setItem("username", username);
+}
+
+function messageTemplate({ user, message, timestamp }) {
   return `
-    <article class="message">
-      <p class="text">${message}</p>
-      <section class="info">
-        <p class="name">${user}: </p>
-        <p class="time">${convertFromUnixTime(timestamp)}</p>
-      </section>
-    </article>
+    <p class="text">${message}</p>
+    <section class="info">
+      <p class="name">${user}: </p>
+      <p class="time">${convertFromUnixTime(timestamp)}</p>
+    </section>
     `;
+}
+
+function chatHeaderTemplate(username) {
+  return `
+    <p>Username:</p>
+    <h2 id="username">${username}</h2>
+    <hr>
+  `;
 }
 
 function convertFromUnixTime(unixTime) {
@@ -84,4 +112,12 @@ function autoGrow(element) {
 function autoScroll(id) {
   var element = document.getElementById(id);
   element.scrollTop = element.scrollHeight;
+}
+
+function overlayShow() {
+  document.getElementById("overlay").style.display = "flex";
+}
+
+function overlayHide() {
+  document.getElementById("overlay").style.display = "none";
 }

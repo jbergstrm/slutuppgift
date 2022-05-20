@@ -21,16 +21,30 @@
                 <p class="icon-text">Webchat</p>
             </a>
             <br>
-            <a href="#">
+            <button onclick="overlayShow()">
                 <i class="material-icons">person</i>
                 <p class="icon-text">Username</p>
-            </a>
+            </button>
             <br>
         </section>
     </aside>
 
+    <div class="overlay" id="overlay">
+        <form>
+            <input class="assign-username" type="text" id="assign-username" placeholder="Username">
+            <section class="assign-username-buttons">
+                <button onclick="changeUsername()">Assign</button>
+                <button onclick="overlayHide()">Cancel</button>
+            </section>
+        </form>
+    </div>
+
     <main class="main" id="main">
         <section class="chatbox">
+            <header class="chat-user" id="chatUser">
+                <!-- Javascript populated -->
+            </header>
+
             <section class="chat" id="chat">
                 <!-- Javascript populated -->
             </section>
