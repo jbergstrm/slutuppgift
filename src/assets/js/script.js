@@ -55,6 +55,10 @@ function changeUsername() {
   window.localStorage.setItem("username", username);
 }
 
+function goAnonymous() {
+  window.localStorage.setItem("username", "Anonymous");
+}
+
 function messageTemplate({ user, message, timestamp }) {
   return `
     <p class="text">${message}</p>
