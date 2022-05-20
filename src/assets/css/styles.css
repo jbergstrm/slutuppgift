@@ -91,7 +91,7 @@ p {
 
 .chat {
     display: flex;
-    flex-direction: column-reverse;
+    flex-direction: column;
     flex: 1;
     overflow-y: scroll;
     scroll-behavior: smooth;

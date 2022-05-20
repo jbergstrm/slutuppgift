@@ -1,7 +1,17 @@
 const URL_GET_MESSAGES =
   "https://ha-slutuppgift-chat-do.westling.workers.dev/api/messages";
+const URL_GET_UPDATED =
+  "https://ha-slutuppgift-chat-do.westling.workers.dev/api/messages/updated";
+const URL_APPEND_MESSAGE =
+  "https://ha-slutuppgift-chat-do.westling.workers.dev/api/messages/append";
 
 var sidebarFolded = true;
+
+/*
+  For test:
+  [1] 1652796015709
+  [4] 1652431516499
+*/
 
 window.onload = function () {
   loadMessages();
@@ -11,27 +21,33 @@ window.onload = function () {
   else loadUsername("Anonymous");
 };
 
-function loadMessages() {
+function loadMessages(latest = "") {
   fetch("./assets/token.data")
     .then((response) => response.text())
     .then((token) => {
       fetch(URL_GET_MESSAGES, {
         method: "POST",
         headers: { Authorization: token },
+        body: JSON.stringify({ last: Number(latest) }),
       })
         .then((response) => response.json())
         .then((data) => {
           if (data.success) {
+            window.localStorage.setItem("timestamp", data.last);
+
             const fragment = new DocumentFragment();
             const container = document.querySelector(".chat");
 
-            data.messages.forEach((message) => {
-              const article = document.createElement("article");
+            data.messages
+              .slice()
+              .reverse()
+              .forEach((message) => {
+                const article = document.createElement("article");
 
-              article.classList.add("message");
-              article.innerHTML = messageTemplate(message);
-              fragment.appendChild(article);
-            });
+                article.classList.add("message");
+                article.innerHTML = messageTemplate(message);
+                fragment.appendChild(article);
+              });
 
             container.appendChild(fragment);
             autoScroll("chat");
@@ -42,6 +58,26 @@ function loadMessages() {
             "Failed to fetch data from: " + URL_GET_MESSAGES + ". ERROR: " + err
           )
         );
+    })
+    .catch((err) => console.log("Failed to load bearer token. ERROR: " + err));
+}
+
+function refrechMessages() {
+  fetch("./assets/token.data")
+    .then((response) => response.text())
+    .then((token) => {
+      fetch(URL_GET_UPDATED, {
+        method: "POST",
+        headers: { Authorization: token },
+        body: JSON.stringify({
+          last: Number(window.localStorage.getItem("timestamp")),
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          if (!data.updated) loadMessages(localStorage.getItem("timestamp"));
+        });
     })
     .catch((err) => console.log("Failed to load bearer token. ERROR: " + err));
 }
