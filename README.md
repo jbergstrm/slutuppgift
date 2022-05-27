@@ -163,6 +163,7 @@ https://ha-slutuppgift-chat-do.westling.workers.dev/api/messages
 |------------|----------------|
 | `limit`    | Antal meddelanden att returnera _(default: 30, max: 30)_ |
 | `last`     | Returneras vid varje `/api/messages` request. Bör sparas undan för framtida requests mot `/api/messages/updated` och `/api/messages`. |
+| `reverse`  | Sätts till `true` för att hämta meddelande som inkommit före ett specifikt meddelande. Det äldsta meddelandets timestamp bör användas som värde för `last`-parametern. |
 
 <br>
 
