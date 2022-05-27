@@ -5,94 +5,124 @@ const URL_GET_UPDATED =
 const URL_APPEND_MESSAGE =
   "https://ha-slutuppgift-chat-do.westling.workers.dev/api/messages/append";
 
+// Sidebar position if folded or not
 var sidebarFolded = true;
 
-/*
-  For test:
-  [1] 1652796015709
-  [4] 1652431516499
-*/
-
 window.onload = function () {
+  loadSavedUsername();
   loadMessages();
-
-  const username = window.localStorage.getItem("username");
-  if (username !== null && username !== "") loadUsername(username);
-  else loadUsername("Anonymous");
 };
 
-function loadMessages(latest = "") {
-  fetch("./assets/token.data")
-    .then((response) => response.text())
-    .then((token) => {
-      fetch(URL_GET_MESSAGES, {
-        method: "POST",
-        headers: { Authorization: token },
-        body: JSON.stringify({ last: Number(latest) }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.success) {
-            window.localStorage.setItem("timestamp", data.last);
-
-            const fragment = new DocumentFragment();
-            const container = document.querySelector(".chat");
-
-            data.messages
-              .slice()
-              .reverse()
-              .forEach((message) => {
-                const article = document.createElement("article");
-
-                article.classList.add("message");
-                article.innerHTML = messageTemplate(message);
-                fragment.appendChild(article);
-              });
-
-            container.appendChild(fragment);
-            autoScroll("chat");
-          }
-        })
-        .catch((err) =>
-          console.log(
-            "Failed to fetch data from: " + URL_GET_MESSAGES + ". ERROR: " + err
-          )
-        );
+function loadMessages(latest = "", limit = 30) {
+  getBearerToken().then((token) => {
+    fetch(URL_GET_MESSAGES, {
+      method: "POST",
+      headers: { Authorization: token },
+      body: JSON.stringify({ last: latest, limit: limit }),
     })
-    .catch((err) => console.log("Failed to load bearer token. ERROR: " + err));
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          localStorage.setItem("latestMessage", data.latest);
+
+          const fragment = new DocumentFragment();
+          const container = document.querySelector(".chat");
+
+          data.messages
+            .slice()
+            .reverse()
+            .forEach((message) => {
+              const article = document.createElement("article");
+
+              article.classList.add("message");
+              article.innerHTML = messageTemplate(message);
+              fragment.appendChild(article);
+            });
+
+          container.appendChild(fragment);
+          autoScroll("chat");
+        }
+      })
+      .catch((err) =>
+        console.log(
+          `Error: Failed to fetch data from ${URL_GET_MESSAGES}\n${err}`
+        )
+      );
+  });
 }
 
 function refrechMessages() {
-  fetch("./assets/token.data")
-    .then((response) => response.text())
-    .then((token) => {
-      fetch(URL_GET_UPDATED, {
-        method: "POST",
-        headers: { Authorization: token },
-        body: JSON.stringify({
-          last: Number(window.localStorage.getItem("timestamp")),
-        }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log(data);
-          if (!data.updated) loadMessages(localStorage.getItem("timestamp"));
-        });
+  getBearerToken().then((token) => {
+    fetch(URL_GET_UPDATED, {
+      method: "POST",
+      headers: { Authorization: token },
+      body: JSON.stringify({
+        last: localStorage.getItem("latestMessage"),
+      }),
     })
-    .catch((err) => console.log("Failed to load bearer token. ERROR: " + err));
+      .then((response) => response.json())
+      .then((data) => {
+        if (!data.updated) loadMessages(localStorage.getItem("latestMessages"));
+      })
+      .catch((err) =>
+        console.log(
+          `Error: Failed to fetch data from ${URL_GET_UPDATED}\n${err}`
+        )
+      );
+  });
 }
 
-function loadUsername(username) {
+function sendMessage() {
+  getBearerToken().then((token) => {
+    fetch(URL_APPEND_MESSAGE, {
+      method: "POST",
+      headers: { Authorization: token },
+      body: JSON.stringify({
+        user: localStorage.getItem("username"),
+        message: getMessageInput(),
+      }),
+    })
+      .then((response) => response.json)
+      .then((data) => {
+        if (!data.success) alert("Message didn't go through");
+      })
+      .catch((err) =>
+        console.log(
+          `Error: Failed to send message to ${URL_APPEND_MESSAGE}\n${err}`
+        )
+      );
+  });
+}
+
+async function getBearerToken() {
+  return await fetch("./assets/token.data")
+    .then((response) => {
+      return response.text();
+    })
+    .catch((err) => console.log(`Error: Failed to load bearer token\n${err}`));
+}
+
+function loadSavedUsername() {
+  const username = localStorage.getItem("username");
+  if (username !== null && username !== "") loadUsernameToHTML(username);
+  else loadUsernameToHTML("Anonymous");
+}
+
+function loadUsernameToHTML(username) {
   document.getElementById("chatUser").innerHTML = chatHeaderTemplate(username);
+}
+
+function getMessageInput() {
+  return document.getElementById("messageInput").value;
 }
 
 function changeUsername() {
   const username = document.getElementById("assign-username").value;
-  window.localStorage.setItem("username", username);
+  localStorage.setItem("username", username);
 }
 
 function goAnonymous() {
-  window.localStorage.setItem("username", "Anonymous");
+  localStorage.setItem("username", "");
 }
 
 function messageTemplate({ user, message, timestamp }) {
@@ -137,9 +167,11 @@ function convertFromUnixTime(unixTime) {
 function toggleSidebar() {
   if (sidebarFolded) {
     document.getElementById("sidebar").style.width = "250px";
+    document.getElementById("sidebar").style.opacity = "0.9";
     this.sidebarFolded = false;
   } else {
     document.getElementById("sidebar").style.width = "85px";
+    document.getElementById("sidebar").style.opacity = "1";
     this.sidebarFolded = true;
   }
 }

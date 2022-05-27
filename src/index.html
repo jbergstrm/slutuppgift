@@ -34,7 +34,8 @@
         </section>
     </aside>
 
-    <div class="overlay" id="overlay">
+    <!--- Overlay for username change -->
+    <section class="overlay" id="overlay">
         <form>
             <input class="assign-username" type="text" id="assign-username" placeholder="Username">
             <section class="assign-username-buttons">
@@ -43,7 +44,7 @@
                 <button onclick="overlayHide()">Cancel</button>
             </section>
         </form>
-    </div>
+    </section>
 
     <main class="main" id="main">
         <section class="chatbox">
@@ -56,9 +57,9 @@
             </section>
 
             <footer class="chat-input">
-                <form method="post">
-                    <textarea maxlength="150" oninput="autoGrow(this)"></textarea>
-                    <input type="submit" id="postButton" value="POST">
+                <form>
+                    <textarea id="messageInput" maxlength="150" oninput="autoGrow(this)"></textarea>
+                    <button id="postButton" onclick="sendMessage()">POST</button>
                 </form>
             </footer>
         </section>
