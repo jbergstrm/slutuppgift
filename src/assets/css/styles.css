@@ -155,6 +155,11 @@ p {
     width: 0;
 }
 
+.chat-input form div {
+    display: flex;
+    align-items: flex-end;
+}
+
 .chat-input form input {
     flex: 0.2;
     font-size: 18px;
@@ -165,6 +170,7 @@ p {
     color: #f1f1f1;
     cursor: pointer;
     max-height: 42px;
+    max-width: 80px;
 }
 
 .chat-input form input:hover {

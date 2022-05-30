@@ -14,7 +14,7 @@
 </head>
 
 <body>
-    <aside class="sidebar" id="sidebar" onmouseover="toggleSidebar()" onmouseout="toggleSidebar()">
+    <aside class="sidebar" id="sidebar" onmouseover="extendSidebar()" onmouseout="shrinkSidebar()">
         <section>
             <a href="index.html">
                 <i class="material-icons">home</i>
@@ -59,7 +59,9 @@
             <footer class="chat-input">
                 <form onsubmit="sendMessage(); return false">
                     <textarea id="messageInput" maxlength="150" oninput="autoGrow(this)"></textarea>
-                    <input type="submit" value="POST">
+                    <div>
+                        <input type="submit" value="POST">
+                    </div>
                 </form>
             </footer>
         </section>

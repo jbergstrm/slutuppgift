@@ -5,14 +5,23 @@ const URL_GET_UPDATED =
 const URL_APPEND_MESSAGE =
   "https://ha-slutuppgift-chat-do.westling.workers.dev/api/messages/append";
 
-// Sidebar position if folded or not
-let sidebarFolded = true;
+function getBearerToken() {
+  fetch("./assets/token.data")
+    .then((response) => response.text())
+    .then((token) => save("bearerToken", token))
+    .catch(() => console.log("Failed to load token"));
+}
 
-// TODO: Hide
-const bearerToken =
-  "Bearer N31fRWVMZCtwU0JeZnBQdVBjTmlOImRzcTAxfl08cz1xR2lyWGFJfmo5JC5RNSc=";
+function save(key, value) {
+  localStorage.setItem(key, value);
+}
+
+function load(key) {
+  return localStorage.getItem(key);
+}
 
 window.onload = function () {
+  getBearerToken();
   loadSavedUsername();
   loadMessages();
 };
@@ -20,7 +29,7 @@ window.onload = function () {
 function loadMessages(latest = "", limit = 30) {
   fetch(URL_GET_MESSAGES, {
     method: "POST",
-    headers: { Authorization: bearerToken },
+    headers: { Authorization: load("bearerToken") },
     body: JSON.stringify({ last: latest, limit: limit }),
   })
     .then((response) => response.json())
@@ -57,7 +66,7 @@ function loadMessages(latest = "", limit = 30) {
 function refrechMessages() {
   fetch(URL_GET_UPDATED, {
     method: "POST",
-    headers: { Authorization: bearerToken },
+    headers: { Authorization: load("bearerToken") },
     body: JSON.stringify({
       last: localStorage.getItem("latestMessage"),
     }),
@@ -89,7 +98,7 @@ function sendMessage() {
 
   fetch(URL_APPEND_MESSAGE, {
     method: "POST",
-    headers: { Authorization: bearerToken },
+    headers: { Authorization: load("bearerToken") },
     body: JSON.stringify(body),
   })
     .then((response) => response.json())
@@ -177,16 +186,14 @@ function convertFromUnixTime(unixTime) {
   );
 }
 
-function toggleSidebar() {
-  if (sidebarFolded) {
-    document.getElementById("sidebar").style.width = "250px";
-    document.getElementById("sidebar").style.opacity = "0.9";
-    sidebarFolded = false;
-  } else {
-    document.getElementById("sidebar").style.width = "85px";
-    document.getElementById("sidebar").style.opacity = "1";
-    sidebarFolded = true;
-  }
+function extendSidebar() {
+  document.getElementById("sidebar").style.width = "250px";
+  document.getElementById("sidebar").style.opacity = "0.9";
+}
+
+function shrinkSidebar() {
+  document.getElementById("sidebar").style.width = "85px";
+  document.getElementById("sidebar").style.opacity = "1";
 }
 
 function autoGrow(element) {
