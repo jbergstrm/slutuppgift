@@ -155,7 +155,7 @@ p {
     width: 0;
 }
 
-.chat-input form button {
+.chat-input form input {
     flex: 0.2;
     font-size: 18px;
     padding: 10px;
@@ -167,7 +167,7 @@ p {
     max-height: 42px;
 }
 
-.chat-input form button:hover {
+.chat-input form input:hover {
     background-color: deepskyblue;
 }
 
@@ -179,7 +179,7 @@ p {
     height: 100%;
 }
 
-.overlay form {
+.overlay div {
     background-color: rgba(0, 0, 0, 0.7);
     position: absolute;
     top: 70px;

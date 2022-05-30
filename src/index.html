@@ -36,14 +36,14 @@
 
     <!--- Overlay for username change -->
     <section class="overlay" id="overlay">
-        <form>
+        <div>
             <input class="assign-username" type="text" id="assign-username" placeholder="Username">
             <section class="assign-username-buttons">
                 <button onclick="changeUsername()">Assign</button>
                 <button onclick="goAnonymous()">Anonymous</button>
                 <button onclick="overlayHide()">Cancel</button>
             </section>
-        </form>
+        </div>
     </section>
 
     <main class="main" id="main">
@@ -57,9 +57,9 @@
             </section>
 
             <footer class="chat-input">
-                <form>
+                <form onsubmit="sendMessage(); return false">
                     <textarea id="messageInput" maxlength="150" oninput="autoGrow(this)"></textarea>
-                    <button id="postButton" onclick="sendMessage()">POST</button>
+                    <input type="submit" value="POST">
                 </form>
             </footer>
         </section>

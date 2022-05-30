@@ -6,7 +6,11 @@ const URL_APPEND_MESSAGE =
   "https://ha-slutuppgift-chat-do.westling.workers.dev/api/messages/append";
 
 // Sidebar position if folded or not
-var sidebarFolded = true;
+let sidebarFolded = true;
+
+// TODO: Hide
+const bearerToken =
+  "Bearer N31fRWVMZCtwU0JeZnBQdVBjTmlOImRzcTAxfl08cz1xR2lyWGFJfmo5JC5RNSc=";
 
 window.onload = function () {
   loadSavedUsername();
@@ -14,92 +18,97 @@ window.onload = function () {
 };
 
 function loadMessages(latest = "", limit = 30) {
-  getBearerToken().then((token) => {
-    fetch(URL_GET_MESSAGES, {
-      method: "POST",
-      headers: { Authorization: token },
-      body: JSON.stringify({ last: latest, limit: limit }),
+  fetch(URL_GET_MESSAGES, {
+    method: "POST",
+    headers: { Authorization: bearerToken },
+    body: JSON.stringify({ last: latest, limit: limit }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.success) {
+        console.log("loadMessage: " + data.last);
+        localStorage.setItem("latestMessage", data.last);
+
+        const fragment = new DocumentFragment();
+        const container = document.querySelector(".chat");
+
+        data.messages
+          .slice()
+          .reverse()
+          .forEach((message) => {
+            const article = document.createElement("article");
+
+            article.classList.add("message");
+            article.innerHTML = messageTemplate(message);
+            fragment.appendChild(article);
+          });
+
+        container.appendChild(fragment);
+        autoScroll("chat");
+      }
     })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          localStorage.setItem("latestMessage", data.latest);
-
-          const fragment = new DocumentFragment();
-          const container = document.querySelector(".chat");
-
-          data.messages
-            .slice()
-            .reverse()
-            .forEach((message) => {
-              const article = document.createElement("article");
-
-              article.classList.add("message");
-              article.innerHTML = messageTemplate(message);
-              fragment.appendChild(article);
-            });
-
-          container.appendChild(fragment);
-          autoScroll("chat");
-        }
-      })
-      .catch((err) =>
-        console.log(
-          `Error: Failed to fetch data from ${URL_GET_MESSAGES}\n${err}`
-        )
-      );
-  });
+    .catch((err) =>
+      console.log(
+        `Error: Failed to fetch data from ${URL_GET_MESSAGES}\n${err}`
+      )
+    );
 }
 
 function refrechMessages() {
-  getBearerToken().then((token) => {
-    fetch(URL_GET_UPDATED, {
-      method: "POST",
-      headers: { Authorization: token },
-      body: JSON.stringify({
-        last: localStorage.getItem("latestMessage"),
-      }),
+  fetch(URL_GET_UPDATED, {
+    method: "POST",
+    headers: { Authorization: bearerToken },
+    body: JSON.stringify({
+      last: localStorage.getItem("latestMessage"),
+    }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(data);
+      if (!data.updated) loadMessages(localStorage.getItem("latestMessage"));
     })
-      .then((response) => response.json())
-      .then((data) => {
-        if (!data.updated) loadMessages(localStorage.getItem("latestMessages"));
-      })
-      .catch((err) =>
-        console.log(
-          `Error: Failed to fetch data from ${URL_GET_UPDATED}\n${err}`
-        )
-      );
-  });
+    .catch((err) =>
+      console.log(`Error: Failed to fetch data from ${URL_GET_UPDATED}\n${err}`)
+    );
 }
 
 function sendMessage() {
-  getBearerToken().then((token) => {
-    fetch(URL_APPEND_MESSAGE, {
-      method: "POST",
-      headers: { Authorization: token },
-      body: JSON.stringify({
-        user: localStorage.getItem("username"),
-        message: getMessageInput(),
-      }),
-    })
-      .then((response) => response.json)
-      .then((data) => {
-        if (!data.success) alert("Message didn't go through");
-      })
-      .catch((err) =>
-        console.log(
-          `Error: Failed to send message to ${URL_APPEND_MESSAGE}\n${err}`
-        )
-      );
-  });
-}
+  let body = {};
+  if (localStorage.getItem("username").length > 1) {
+    body = {
+      user: localStorage.getItem("username"),
+      message: getMessageInput(),
+    };
+  } else {
+    body = {
+      message: getMessageInput(),
+    };
+  }
 
-async function getBearerToken() {
-  return await fetch("./assets/token.data")
-    .then((response) => {
-      return response.text();
+  console.log(body);
+
+  fetch(URL_APPEND_MESSAGE, {
+    method: "POST",
+    headers: { Authorization: bearerToken },
+    body: JSON.stringify(body),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(data);
+      if (data.success) {
+        refrechMessages();
+      }
+      if (!data.success) {
+        console.log("Failed to send!");
+      }
     })
-    .catch((err) => console.log(`Error: Failed to load bearer token\n${err}`));
+    .catch((err) =>
+      console.log(
+        `Error: Failed to send message to ${URL_APPEND_MESSAGE}\n${err}`
+      )
+    );
+
+  document.getElementById("messageInput").value = "";
 }
 
 function loadSavedUsername() {
@@ -119,10 +128,14 @@ function getMessageInput() {
 function changeUsername() {
   const username = document.getElementById("assign-username").value;
   localStorage.setItem("username", username);
+  loadUsernameToHTML(username);
+  overlayHide();
 }
 
 function goAnonymous() {
   localStorage.setItem("username", "");
+  loadUsernameToHTML("Anonymous");
+  overlayHide();
 }
 
 function messageTemplate({ user, message, timestamp }) {
@@ -168,11 +181,11 @@ function toggleSidebar() {
   if (sidebarFolded) {
     document.getElementById("sidebar").style.width = "250px";
     document.getElementById("sidebar").style.opacity = "0.9";
-    this.sidebarFolded = false;
+    sidebarFolded = false;
   } else {
     document.getElementById("sidebar").style.width = "85px";
     document.getElementById("sidebar").style.opacity = "1";
-    this.sidebarFolded = true;
+    sidebarFolded = true;
   }
 }
 
