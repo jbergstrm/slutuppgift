@@ -14,6 +14,7 @@
 </head>
 
 <body>
+    <!--- The sidebar -->
     <aside class="sidebar" id="sidebar" onmouseover="extendSidebar()" onmouseout="shrinkSidebar()">
         <section>
             <a href="index.html">
@@ -21,7 +22,7 @@
                 <p class="icon-text">Webchat</p>
             </a>
             <br>
-            <button onclick="overlayShow()">
+            <button onclick="showOverlay()">
                 <i class="material-icons">person</i>
                 <p class="icon-text">Username</p>
             </button>
@@ -41,15 +42,18 @@
             <section class="assign-username-buttons">
                 <button onclick="changeUsername()">Assign</button>
                 <button onclick="goAnonymous()">Anonymous</button>
-                <button onclick="overlayHide()">Cancel</button>
+                <button onclick="hideOverlay()">Cancel</button>
             </section>
         </div>
     </section>
 
+    <!--- Chating field -->
     <main class="main" id="main">
         <section class="chatbox">
             <header class="chat-user" id="chatUser">
-                <!-- Javascript populated -->
+                <p>Username:</p>
+                <h2 id="username"></h2>
+                <hr>
             </header>
 
             <section class="chat" id="chat">

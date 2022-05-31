@@ -1,16 +1,10 @@
-const URL_GET_MESSAGES =
-  "https://ha-slutuppgift-chat-do.westling.workers.dev/api/messages";
-const URL_GET_UPDATED =
-  "https://ha-slutuppgift-chat-do.westling.workers.dev/api/messages/updated";
-const URL_APPEND_MESSAGE =
-  "https://ha-slutuppgift-chat-do.westling.workers.dev/api/messages/append";
+const URL = "https://ha-slutuppgift-chat-do.westling.workers.dev/api";
 
-function getBearerToken() {
-  fetch("./assets/token.data")
-    .then((response) => response.text())
-    .then((token) => save("bearerToken", token))
-    .catch(() => console.log("Failed to load token"));
-}
+addEventListener("DOMContentLoaded", () => {
+  getBearerToken();
+  loadUsername();
+  loadMessages();
+});
 
 function save(key, value) {
   localStorage.setItem(key, value);
@@ -20,170 +14,170 @@ function load(key) {
   return localStorage.getItem(key);
 }
 
-window.onload = function () {
-  getBearerToken();
-  loadSavedUsername();
-  loadMessages();
-};
+function remove(key) {
+  localStorage.removeItem(key);
+}
 
-function loadMessages(latest = "", limit = 30) {
-  fetch(URL_GET_MESSAGES, {
+function getBearerToken() {
+  fetch("./assets/token.data")
+    .then((response) => response.text())
+    .then((token) => save("bearerToken", token))
+    .catch((e) => console.log(`Error: Failed to load token!\n${e}`));
+}
+
+function loadMessages(last = "", limit = 30, reverse = false) {
+  fetch(`${URL}/messages`, {
     method: "POST",
     headers: { Authorization: load("bearerToken") },
-    body: JSON.stringify({ last: latest, limit: limit }),
+    body: JSON.stringify({ last, limit, reverse }),
   })
     .then((response) => response.json())
     .then((data) => {
       if (data.success) {
-        console.log("loadMessage: " + data.last);
-        localStorage.setItem("latestMessage", data.last);
-
-        const fragment = new DocumentFragment();
-        const container = document.querySelector(".chat");
-
-        data.messages
-          .slice()
-          .reverse()
-          .forEach((message) => {
-            const article = document.createElement("article");
-
-            article.classList.add("message");
-            article.innerHTML = messageTemplate(message);
-            fragment.appendChild(article);
-          });
-
-        container.appendChild(fragment);
-        autoScroll("chat");
+        save("latestMessage", data.last);
+        showMessages(data.messages);
       }
     })
-    .catch((err) =>
+    .catch((e) =>
       console.log(
-        `Error: Failed to fetch data from ${URL_GET_MESSAGES}\n${err}`
+        `Error: Failed while fetching data from ${URL_GET_MESSAGES}\n${e}`
       )
     );
 }
 
-function refrechMessages() {
-  fetch(URL_GET_UPDATED, {
+function refrechMessages(last = load("latestMessage")) {
+  fetch(`${URL}/messages/updated`, {
     method: "POST",
     headers: { Authorization: load("bearerToken") },
-    body: JSON.stringify({
-      last: localStorage.getItem("latestMessage"),
-    }),
+    body: JSON.stringify({ last }),
   })
     .then((response) => response.json())
     .then((data) => {
-      console.log(data);
-      if (!data.updated) loadMessages(localStorage.getItem("latestMessage"));
+      // Updated is always false if the "last" timestamp is past to body.
+      // Need to +1 the time to not fetch the same massage again.
+      if (!data.updated) loadMessages(parseInt(last) + 1);
     })
-    .catch((err) =>
-      console.log(`Error: Failed to fetch data from ${URL_GET_UPDATED}\n${err}`)
+    .catch((e) =>
+      console.log(
+        `Error: Failed while fetching data from ${URL_GET_UPDATED}\n${e}`
+      )
     );
 }
 
 function sendMessage() {
-  let body = {};
-  if (localStorage.getItem("username").length > 1) {
-    body = {
-      user: localStorage.getItem("username"),
-      message: getMessageInput(),
-    };
-  } else {
-    body = {
-      message: getMessageInput(),
-    };
+  const message = getMessageBody();
+
+  if (message !== undefined) {
+    fetch(`${URL}/messages/append`, {
+      method: "POST",
+      headers: { Authorization: load("bearerToken") },
+      body: JSON.stringify(message),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) refrechMessages();
+      })
+      .catch((e) =>
+        console.log(
+          `Error: Failed to append message to ${URL_APPEND_MESSAGE}\n${e}`
+        )
+      );
   }
 
-  console.log(body);
-
-  fetch(URL_APPEND_MESSAGE, {
-    method: "POST",
-    headers: { Authorization: load("bearerToken") },
-    body: JSON.stringify(body),
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      console.log(data);
-      if (data.success) {
-        refrechMessages();
-      }
-      if (!data.success) {
-        console.log("Failed to send!");
-      }
-    })
-    .catch((err) =>
-      console.log(
-        `Error: Failed to send message to ${URL_APPEND_MESSAGE}\n${err}`
-      )
-    );
-
-  document.getElementById("messageInput").value = "";
+  setElementValueById("messageInput", "");
 }
 
-function loadSavedUsername() {
-  const username = localStorage.getItem("username");
-  if (username !== null && username !== "") loadUsernameToHTML(username);
-  else loadUsernameToHTML("Anonymous");
+function showMessages(messages) {
+  const fragment = new DocumentFragment();
+
+  messages
+    .slice()
+    .reverse()
+    .forEach((message) => {
+      const article = document.createElement("article");
+
+      article.classList.add("message");
+      article.innerHTML = messageTemplate(message);
+      fragment.appendChild(article);
+    });
+
+  document.querySelector(".chat").appendChild(fragment);
+  autoScroll(document.getElementById("chat"));
 }
 
-function loadUsernameToHTML(username) {
-  document.getElementById("chatUser").innerHTML = chatHeaderTemplate(username);
-}
-
-function getMessageInput() {
-  return document.getElementById("messageInput").value;
-}
-
-function changeUsername() {
-  const username = document.getElementById("assign-username").value;
-  localStorage.setItem("username", username);
-  loadUsernameToHTML(username);
-  overlayHide();
-}
-
-function goAnonymous() {
-  localStorage.setItem("username", "");
-  loadUsernameToHTML("Anonymous");
-  overlayHide();
+function getMessageBody() {
+  if (getValueFromElementById("messageInput") !== "") {
+    if (load("username") !== null && load("username") !== "") {
+      return {
+        user: load("username"),
+        message: getValueFromElementById("messageInput"),
+      };
+    } else {
+      return {
+        message: getValueFromElementById("messageInput"),
+      };
+    }
+  }
 }
 
 function messageTemplate({ user, message, timestamp }) {
   return `
     <p class="text">${message}</p>
     <section class="info">
-      <p class="name">${user}: </p>
+      <p class="name">${user}</p>
       <p class="time">${convertFromUnixTime(timestamp)}</p>
     </section>
     `;
 }
 
-function chatHeaderTemplate(username) {
-  return `
-    <p>Username:</p>
-    <h2 id="username">${username}</h2>
-    <hr>
-  `;
+function loadUsername() {
+  const username = load("username");
+  if (username !== null && username !== "")
+    setElementInnerTextById("username", username);
+  else setElementInnerTextById("username", "Anonymous");
+}
+
+function setElementInnerTextById(id, value) {
+  document.getElementById(id).innerText = value;
+}
+
+function setElementValueById(id, value) {
+  document.getElementById(id).value = value;
+}
+
+function getValueFromElementById(id) {
+  return document.getElementById(id).value;
 }
 
 function convertFromUnixTime(unixTime) {
   const date = new Date(unixTime);
-  const year = date.getFullYear();
-  const month = date.getMonth() + 1;
-  const day = date.getDate();
-  const hour = date.getHours();
-  const minute = date.getMinutes();
+  return `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()} ${(
+    "0" + date.getHours()
+  ).slice(-2)}:${("0" + date.getMinutes()).slice(-2)}`;
+}
 
-  return (
-    day +
-    "." +
-    month +
-    "." +
-    year +
-    " " +
-    ("0" + hour).slice(-2) +
-    ":" +
-    ("0" + minute).slice(-2)
+function autoGrow(element) {
+  element.style.height = "0px";
+  element.style.height = element.scrollHeight + "px";
+}
+
+function autoScroll(element) {
+  element.scrollTop = element.scrollHeight;
+}
+
+function changeUsername() {
+  save("username", getValueFromElementById("assign-username"));
+  setElementInnerTextById(
+    "username",
+    getValueFromElementById("assign-username")
   );
+  hideOverlay();
+}
+
+function goAnonymous() {
+  save("username", "");
+  setElementInnerTextById("username", "Anonymous");
+  hideOverlay();
 }
 
 function extendSidebar() {
@@ -196,20 +190,10 @@ function shrinkSidebar() {
   document.getElementById("sidebar").style.opacity = "1";
 }
 
-function autoGrow(element) {
-  element.style.height = "10px";
-  element.style.height = element.scrollHeight + "px";
-}
-
-function autoScroll(id) {
-  var element = document.getElementById(id);
-  element.scrollTop = element.scrollHeight;
-}
-
-function overlayShow() {
+function showOverlay() {
   document.getElementById("overlay").style.display = "flex";
 }
 
-function overlayHide() {
+function hideOverlay() {
   document.getElementById("overlay").style.display = "none";
 }
