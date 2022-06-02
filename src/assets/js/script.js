@@ -3,7 +3,6 @@ const URL = "https://ha-slutuppgift-chat-do.westling.workers.dev/api";
 addEventListener("DOMContentLoaded", () => {
   getBearerToken();
   loadUsername();
-  loadMessages();
 });
 
 function save(key, value) {
@@ -17,7 +16,10 @@ function load(key) {
 function getBearerToken() {
   fetch("./assets/crypt.data")
     .then((response) => response.text())
-    .then((token) => save("crypt", token))
+    .then((token) => {
+      save("crypt", token);
+      loadMessages();
+    })
     .catch((e) => console.log(`Error: Failed to load token!\n${e}`));
 }
 
