@@ -15,16 +15,16 @@ function load(key) {
 }
 
 function getBearerToken() {
-  fetch("./assets/token.data")
+  fetch("./assets/crypt.data")
     .then((response) => response.text())
-    .then((token) => save("bearerToken", token))
+    .then((token) => save("crypt", token))
     .catch((e) => console.log(`Error: Failed to load token!\n${e}`));
 }
 
 function loadMessages(last = "", limit = 30, reverse = false) {
   fetch(`${URL}/messages`, {
     method: "POST",
-    headers: { Authorization: load("bearerToken") },
+    headers: { Authorization: crypt.decrypt(load("crypt")) },
     body: JSON.stringify({ last, limit, reverse }),
   })
     .then((response) => response.json())
@@ -44,7 +44,7 @@ function loadMessages(last = "", limit = 30, reverse = false) {
 function refrechMessages(last = load("latestMessage")) {
   fetch(`${URL}/messages/updated`, {
     method: "POST",
-    headers: { Authorization: load("bearerToken") },
+    headers: { Authorization: crypt.decrypt(load("crypt")) },
     body: JSON.stringify({ last }),
   })
     .then((response) => response.json())
@@ -66,7 +66,7 @@ function sendMessage() {
   if (message !== undefined) {
     fetch(`${URL}/messages/append`, {
       method: "POST",
-      headers: { Authorization: load("bearerToken") },
+      headers: { Authorization: crypt.decrypt(load("crypt")) },
       body: JSON.stringify(message),
     })
       .then((response) => response.json())
