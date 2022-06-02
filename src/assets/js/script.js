@@ -14,10 +14,6 @@ function load(key) {
   return localStorage.getItem(key);
 }
 
-function remove(key) {
-  localStorage.removeItem(key);
-}
-
 function getBearerToken() {
   fetch("./assets/token.data")
     .then((response) => response.text())
@@ -122,7 +118,7 @@ function getMessageBody() {
 
 function messageTemplate({ user, message, timestamp }) {
   return `
-    <p class="text">${message}</p>
+    <p>${message}</p>
     <section class="info">
       <p class="name">${user}</p>
       <p class="time">${convertFromUnixTime(timestamp)}</p>
@@ -157,7 +153,7 @@ function convertFromUnixTime(unixTime) {
 }
 
 function autoGrow(element) {
-  element.style.height = "0px";
+  element.style.height = "5px";
   element.style.height = element.scrollHeight + "px";
 }
 

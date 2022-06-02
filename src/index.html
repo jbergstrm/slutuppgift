@@ -17,10 +17,10 @@
     <!--- The sidebar -->
     <aside class="sidebar" id="sidebar" onmouseover="extendSidebar()" onmouseout="shrinkSidebar()">
         <section>
-            <a href="index.html">
+            <button onclick="location.href = 'index.html'">
                 <i class="material-icons">home</i>
                 <p class="icon-text">Webchat</p>
-            </a>
+            </button>
             <br>
             <button onclick="showOverlay()">
                 <i class="material-icons">person</i>
@@ -31,7 +31,6 @@
                 <i class="material-icons">refresh</i>
                 <p class="icon-text">Refresh</p>
             </button>
-            <br>
         </section>
     </aside>
 
@@ -52,7 +51,7 @@
         <section class="chatbox">
             <header class="chat-user" id="chatUser">
                 <p>Username:</p>
-                <h2 id="username"></h2>
+                <h1 id="username"></h1>
                 <hr>
             </header>
 

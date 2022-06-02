@@ -1,3 +1,11 @@
+:root {
+    --highlight-color: deepskyblue;
+    --highlight-hover-color: dodgerblue;
+    --black: #151515;
+    --white: #f1f1f1;
+    --gray: #818181;
+}
+
 body {
     margin: 0;
     background: linear-gradient(90deg, rgba(160, 175, 232, 1) 30%, rgba(129, 233, 255, 1) 100%);
@@ -9,53 +17,35 @@ p {
 
 .sidebar {
     height: 100%;
+    width: 85px;
     position: fixed;
-    padding-top: 30px;
-    background-color: #111;
     transition: 0.4s;
     overflow-x: hidden;
     white-space: nowrap;
+    background-color: var(--black);
 }
 
-.sidebar::-webkit-scrollbar {
-    width: 0;
+.sidebar section {
+    margin: 30px 0 30px 0;
 }
 
-.sidebar a,
 .sidebar button {
     padding: 8px 8px 8px 32px;
-    color: #818181;
-    display: block;
-}
-
-.sidebar a {
-    text-decoration: none;
-    font-size: 24px;
-}
-
-.sidebar button {
-    background-color: transparent;
+    margin: 5px 0;
     border: none;
     font-size: 20px;
+    color: var(--gray);
+    background-color: transparent;
 }
 
-.sidebar a:hover,
-.sidebar button:hover {
-    color: #f1f1f1;
-    cursor: pointer;
-}
-
-.sidebar p {
-    display: inline;
-}
-
-.material-icons,
 .icon-text {
+    display: inline;
     vertical-align: middle;
 }
 
 .material-icons {
     margin: 0 30px 3px 0;
+    vertical-align: middle;
 }
 
 .main {
@@ -71,73 +61,60 @@ p {
     width: 70%;
     height: 80vh;
     margin-left: 85px;
-    background-color: rgba(0, 0, 0, 0.6);
-    box-shadow: 2px 2px 20px rgba(0, 0, 0, 0.4);
     border-radius: 10px;
     padding: 10px;
+    background-color: rgba(21, 21, 21, 0.6);
+    box-shadow: 2px 2px 20px rgba(21, 21, 21, 0.4);
 }
 
 .chat-user {
-    color: #818181;
-    margin: 5px 20px 10px 20px;
+    color: var(--gray);
+    margin: 5px 10px 0 10px;
     overflow: hidden;
 }
 
-.chat-user h2 {
-    color: #f1f1f1;
+.chat-user h1 {
     margin: 0;
+    color: var(--white);
 }
 
 .chat-user hr {
     height: 2px;
     border-width: 0;
-    background-color: #818181
+    background-color: var(--gray)
 }
 
 .chat {
-    display: flex;
-    flex-direction: column;
     flex: 1;
     overflow-y: scroll;
-    scroll-behavior: smooth;
-    margin: 0 20px 0 20px;
-}
-
-.chat::-webkit-scrollbar {
-    width: 0;
+    margin: 0 20px;
 }
 
 .message {
-    background-color: deepskyblue;
-    color: #111;
-    width: fit-content;
     border-radius: 5px;
-    margin: 15px 0 0px 0;
-    padding: 5px 10px 5px 10px;
+    margin-bottom: 10px;
+    padding: 5px 10px;
+    font-size: 20px;
+    background-color: var(--highlight-color);
 }
 
 .info {
     display: flex;
-    overflow-x: hidden;
     margin-top: 15px;
+    font-size: 16px;
 }
 
 .name {
     font-weight: bold;
-    margin-right: 15px;
-}
-
-.text {
-    font-size: 20px;
 }
 
 .time {
     font-size: 12px;
-    margin: 3px 0 0 auto;
+    margin-left: auto;
 }
 
 .chat-input {
-    margin: 10px 0 0 0;
+    margin-top: 10px;
 }
 
 .chat-input form {
@@ -149,16 +126,12 @@ p {
     border: none;
     outline: none;
     resize: none;
-    font-size: 20px;
+    font-size: 18px;
     margin-right: 10px;
     border-radius: 5px;
     padding: 10px 10px 0 10px;
     height: 32px;
     max-height: 200px;
-}
-
-.chat-input form textarea::-webkit-scrollbar {
-    width: 0;
 }
 
 .chat-input form div {
@@ -172,32 +145,27 @@ p {
     padding: 10px;
     border: none;
     border-radius: 5px;
-    background-color: dodgerblue;
-    color: #f1f1f1;
+    height: 42.6px;
     cursor: pointer;
-    max-height: 42px;
-    max-width: 80px;
-}
-
-.chat-input form input:hover {
-    background-color: deepskyblue;
+    color: var(--white);
+    background-color: var(--highlight-color);
 }
 
 .overlay {
     display: none;
     position: fixed;
-    background-color: rgba(0, 0, 0, 0.6);
     width: 100%;
     height: 100%;
+    background-color: rgba(21, 21, 21, 0.6);
 }
 
 .overlay div {
-    background-color: rgba(0, 0, 0, 0.7);
     position: absolute;
     top: 70px;
     left: 90px;
     padding: 20px;
     border-radius: 10px;
+    background-color: rgba(0, 0, 0, 0.7);
 }
 
 .assign-username {
@@ -209,17 +177,37 @@ p {
 }
 
 .assign-username-buttons {
-    margin: 0 0 0 10px;
+    margin-left: 10px;
 }
 
 .assign-username-buttons button {
     font-size: 14px;
-    background-color: dodgerblue;
-    color: #f1f1f1;
+    border: none;
     border-radius: 5px;
-    padding: 3px 10px 3px 10px;
+    padding: 3px 10px;
+    color: var(--white);
+    background-color: var(--highlight-color);
+}
+
+/* Hover */
+.sidebar button:hover {
+    color: var(--white);
+    cursor: pointer;
+}
+
+.chat-input form input:hover {
+    background-color: var(--highlight-hover-color);
 }
 
 .assign-username-buttons button:hover {
-    background-color: deepskyblue;
+    background-color: var(--highlight-hover-color);
+}
+
+/* Scrollbar hide */
+.sidebar::-webkit-scrollbar {
+    width: 0;
+}
+
+.chat::-webkit-scrollbar {
+    width: 0;
 }
