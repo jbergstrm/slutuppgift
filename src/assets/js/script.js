@@ -1,8 +1,10 @@
 const URL = "https://ha-slutuppgift-chat-do.westling.workers.dev/api";
+const token =
+  "U2FsdGVkX1981OqQuNLB8ynNsBqhiwpKaBSAzD3mMI9wmQeTZNTPzWbFdQeFnaB7He02Mkkpl2Tx6/1yuuHeK9QAXhPeHRCsk+ELl4gJFnt8VQFLeLehvo7Uo87ihDN4";
 
 addEventListener("DOMContentLoaded", () => {
-  getBearerToken();
   loadUsername();
+  loadMessages();
 });
 
 function save(key, value) {
@@ -13,20 +15,10 @@ function load(key) {
   return localStorage.getItem(key);
 }
 
-function getBearerToken() {
-  fetch("./assets/crypt.data")
-    .then((response) => response.text())
-    .then((token) => {
-      save("crypt", token);
-      loadMessages();
-    })
-    .catch((e) => console.log(`Error: Failed to load token!\n${e}`));
-}
-
 function loadMessages(last = "", limit = 30, reverse = false) {
   fetch(`${URL}/messages`, {
     method: "POST",
-    headers: { Authorization: crypt.decrypt(load("crypt")) },
+    headers: { Authorization: crypt.decrypt(token) },
     body: JSON.stringify({ last, limit, reverse }),
   })
     .then((response) => response.json())
@@ -46,7 +38,7 @@ function loadMessages(last = "", limit = 30, reverse = false) {
 function refrechMessages(last = load("latestMessage")) {
   fetch(`${URL}/messages/updated`, {
     method: "POST",
-    headers: { Authorization: crypt.decrypt(load("crypt")) },
+    headers: { Authorization: crypt.decrypt(token) },
     body: JSON.stringify({ last }),
   })
     .then((response) => response.json())
@@ -68,7 +60,7 @@ function sendMessage() {
   if (message !== undefined) {
     fetch(`${URL}/messages/append`, {
       method: "POST",
-      headers: { Authorization: crypt.decrypt(load("crypt")) },
+      headers: { Authorization: crypt.decrypt(token) },
       body: JSON.stringify(message),
     })
       .then((response) => response.json())
